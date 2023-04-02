@@ -24,19 +24,19 @@ function Navbar() {
 
     }, [loggingInName, loggingInPassword])
 
-    const openLoggingIn = () => 
+    function openLoggingIn()
     {
         setIsLoggingIn(true);
     }
 
-    const closeLoggingIn = () => 
+    function closeLoggingIn()
     {
         setIsLoggingIn(false);
         setLoggingInName(null);
         setLoggingInPassword(null);
     }
 
-    const attemptLogin = () => 
+    function attemptLogin()
     {
         onValue(ref(db, "Users"), snapshot =>
         {
@@ -51,7 +51,7 @@ function Navbar() {
         })
     }
 
-    const logOut = () =>
+    function logOut()
     {
         localStorage.setItem("LoggedInUser", JSON.stringify(null));
         setUser(null);

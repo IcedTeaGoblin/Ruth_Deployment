@@ -56,7 +56,8 @@ function Home () {
     }, [addNewName, addNewImage, isAddingArt, addNewDescription, temp])
 
 
-    const submitNewArt = async() => {
+    async function submitNewArt() 
+    {
         try 
         {
             const baseImage = await convertBase64(addNewImage)
@@ -84,29 +85,34 @@ function Home () {
         }
     }
 
-    const openAddingArt = () => {
+    function openAddingArt() 
+    {
         setAddingArt(true);
     }
 
-    const closeAddingArt = () => {
+    function closeAddingArt() 
+    {
         setAddingArt(false);
         setAddNewName("");
         setAddNewImage(null);
         setAddNewDescription("");
     }
 
-    const openViewingArt = (obj) => {
+    function openViewingArt(obj) 
+    {
         console.log(obj);
         setViewingImage(obj);
         setViewingArt(true);
     }
 
-    const closeViewingArt = () => {
+    function closeViewingArt() 
+    {
         setViewingArt(false);
         setViewingImage(null);
     }
 
-    const convertBase64 = (file) => {
+    function convertBase64(file)
+    {
         try
         {
             return new Promise((resolve, reject) => {
