@@ -1,11 +1,8 @@
 import React, {useEffect, useState} from "react";
-import { Container, AppBar, Typography, Grow, Grid, requirePropFactory } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import {db} from "../../firebase-config"
-import { Link } from "react-router-dom";
 import Modal from "react-modal";
-import base64 from 'base-64'
-import firebase from 'firebase/compat/app';
-import { getDatabase, ref, set, onValue } from "firebase/database";
+import { ref, set, onValue } from "firebase/database";
 
  
 import ArtCard from "./ArtCard.jsx";
@@ -14,16 +11,11 @@ import "../css/Home.css";
 
 function Home () {
     const [artCards, setArtCards] = useState([]);
-    //const artCollection = collection(db, "ArtCards")
-    const artCollection = null;
 
     const [isAddingArt, setAddingArt] = useState(false)
     const [addNewName, setAddNewName] = useState("");
     const [addNewImage, setAddNewImage] = useState(null);
     const [addNewDescription, setAddNewDescription] = useState("");
-
-    const [isEditingArt, setEditingArt] = useState(false)
-    const [editNewName, setEditNewName] = useState("");
 
     const [isViewingArt, setViewingArt] = useState(false);
     const [viewingImage, setViewingImage] = useState(null);
@@ -31,8 +23,6 @@ function Home () {
     const [addingArtValid, setAddingArtValid] = useState(true);
 
     const [user, setUser] = useState(null);
-    //const userCollection = collection(db, "Users");
-    const userCollection = null
 
     const [temp, setTemp] = useState(0);
 
@@ -42,23 +32,7 @@ function Home () {
 
     useEffect(() => {
 
-        const getArt = async() => {
-            try
-            {
-                //console.log(artCards);
-                
-                if(localStorage.getItem("isLoading") == true)
-                {
-                    setTimeout(() => {  localStorage.setItem("isLoading", false) }, 1000);
-                }
-            }
-            catch(err)
-            {
-                console.error("readFromDB failed. reason :", err);
-            }
-        }
-
-        if(addNewName == "" || addNewImage === null || addNewDescription == "")
+        if(addNewName === "" || addNewImage === null || addNewDescription === "")
         {
             setAddingArtValid(true);
         }
@@ -121,15 +95,6 @@ function Home () {
         setAddNewDescription("");
     }
 
-    const openEditingArt = () => {
-        setEditingArt(true);
-    }
-
-    const closeEditingArt = () => {
-        setEditingArt(false);
-        setEditNewName("");
-    }
-
     const openViewingArt = (obj) => {
         console.log(obj);
         setViewingImage(obj);
@@ -163,45 +128,6 @@ function Home () {
 
         }
     };
-
-    const addModalStyle = {
-        content: {
-            display: "inline",
-            position: "initial",
-
-            margin: "auto",
-            marginTop: "100px",
-
-            width: "fit-content",
-            display: "flex",
-            minHeight: "200px",
-            minWidth: "500px",
-            backgroundColor: "#f8cde1",
-
-            overflow: "auto"
-        }
-    }
-
-    const modalView = {
-        content: {
-            display: "inline",
-            position: "initial",
-
-            margin: "auto",
-            marginTop: "100px",
-
-            width: "fit-content",
-            display: "flex",
-            minHeight: "200px",
-            minWidth: "500px",
-            backgroundColor: "#ee90b1",
-
-            overflow: "auto",
-
-            border: "20px",
-            borderColor: "000000"
-        }
-    }
 
     return (
         <div style ={{backgroundColor: "#f8cde1"}}>
@@ -285,7 +211,7 @@ function Home () {
                         </div>
                     </div>
             }   
-            <img className = "footer" src = {require("../Images/Footer.jpg")} alt="Footer image for the website"/>
+            <img className = "footer" src = {require("../Images/Footer.jpg")} alt="Footer for the website"/>
         </div>
     )
 }

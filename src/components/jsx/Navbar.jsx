@@ -1,59 +1,27 @@
 import React, {useEffect, useState} from "react";
-import {collection, getDocs, addDoc} from "firebase/firestore"
 import "../css/Navbar.css";
 import Logo from "../Images/Logo.png";
-import Background from "../Images/Background.jpg";
-import { requirePropFactory } from "@material-ui/core";
 import {db} from "../../firebase-config"
 import Modal from "react-modal";
-import { getDatabase, ref, set, onValue } from "firebase/database";
+import { ref, onValue } from "firebase/database";
 
 
 function Navbar() {
 
     const [user, setUser] = useState([]);
 
-    const [users, setUsers] = useState([]);
-    //const userCollection = collection(db, "Users");
-    const userCollection = null;
-
     const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-    const [loggingInName, setLoggingInName] = useState(null);
-    const [loggingInPassword, setLoggingInPassword] = useState(null);
+    const [loggingInName, setLoggingInName] = useState("");
+    const [loggingInPassword, setLoggingInPassword] = useState("");
 
     const [loggingInValid, setLoggingInValid] = useState(true);
 
-    const [tempValue, setTempValue] = useState(0);
-
     useEffect(() => {
 
-        const getUsers = async() => {
-            const data = await getDocs(userCollection);
-
-            setUsers(data.docs.map((doc) => ({...doc.data(), id: doc.id})));
-        }
-
-
-        if(loggingInName != "" && loggingInPassword != null)
-        {
-            setLoggingInValid(false);
-        }
-
-        set(ref(db, "Users/" + "Logan"), {name: "Logan", password: "Itisataco1"});
-        //console.log(localStorage.getItem("LoggedInUser"));
+        setLoggingInValid(loggingInName === "" || loggingInPassword === "");
         setUser(JSON.parse(localStorage.getItem("LoggedInUser")));
 
-        onValue(ref(db, "Users"), snapshot =>
-        {
-            var tempUser = [];
-            snapshot.forEach(n =>
-            {
-                tempUser.push(n.val());
-            })
-            setUsers(tempUser);
-        })
-        //getUsers();
     }, [loggingInName, loggingInPassword])
 
     const openLoggingIn = () => 
@@ -70,15 +38,16 @@ function Navbar() {
 
     const attemptLogin = () => 
     {
-        users.forEach((checkUser) => 
+        onValue(ref(db, "Users"), snapshot =>
         {
-            if(checkUser.name == loggingInName && checkUser.password == loggingInPassword)
+            snapshot.forEach(n =>
             {
-                //console.log(checkUser);
-                localStorage.setItem("LoggedInUser", JSON.stringify(checkUser));
-                //console.log(JSON.parse(localStorage.getItem("LoggedInUser")));
-                window.location.reload(false);
-            }
+                if(n.val().name === loggingInName && n.val().password === loggingInPassword)
+                {
+                    localStorage.setItem("LoggedInUser", JSON.stringify(n.val()));
+                    window.location.reload(false);
+                }
+            })
         })
     }
 
@@ -91,7 +60,6 @@ function Navbar() {
 
     const addModalStyle = {
         content: {
-            display: "inline",
             position: "initial",
 
             margin: "auto",
@@ -110,7 +78,7 @@ function Navbar() {
 
     return (
         <div>
-            <img className = "header" src = {require("../Images/Header.jpg")} alt="Header image for the website"/>
+            <img className = "header" src = {require("../Images/Header.jpg")} alt="Header for the website"/>
             <div className = "mainNavBar">
                 <div className = "LogoTitle">
                     <img className = "Logo" src = {Logo} alt="Website logo"/>
