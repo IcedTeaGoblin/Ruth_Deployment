@@ -4,6 +4,7 @@ import Logo from "../Images/Logo.png";
 import {db} from "../../firebase-config"
 import Modal from "react-modal";
 import { ref, onValue } from "firebase/database";
+import { NavLink, NavLinkProps } from "react-router-dom";
 
 
 function Navbar() {
@@ -78,12 +79,13 @@ function Navbar() {
 
     return (
         <div>
-            <img className = "header" src = {require("../Images/Header.jpg")} alt="Header for the website"/>
             <div className = "mainNavBar">
                 <div className = "LogoTitle">
                     <img className = "Logo" src = {Logo} alt="Website logo"/>
                     <h1 className = "Title">Ruth's Art Portfolio</h1>
                 </div>
+                <NavLink to = "/about">About Me</NavLink>
+                <NavLink to = "/home">Home</NavLink>
                 {
                     user === null ?
                         <div className = "loginHeader">

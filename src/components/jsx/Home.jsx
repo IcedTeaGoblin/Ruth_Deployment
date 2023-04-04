@@ -217,9 +217,8 @@ function Home () {
                         </div>
                     </div>
             }   
-            <img className = "footer" src = {require("../Images/Footer.jpg")} alt="Footer for the website"/>
         </div>
     )
 }
-
+///<img className = "footer" src = {require("../Images/Footer.jpg")} alt="Footer for the website"/>
 export default Home;
