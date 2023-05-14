@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/static/css/main.153ef77b.css",
-    "main.js": "/static/js/main.de1ac163.js",
+    "main.css": "/static/css/main.ff4ad9b7.css",
+    "main.js": "/static/js/main.8c14ce51.js",
     "static/media/Logo.png": "/static/media/Logo.454341db4ebffebd5c18.png",
     "static/media/DK Sugary Pancake.otf": "/static/media/DK Sugary Pancake.756d09cf7a1e5ca429d6.otf",
-    "static/media/Footer.jpg": "/static/media/Footer.4a9bbe90b8d4535ca042.jpg",
-    "static/media/Header.jpg": "/static/media/Header.c63596bc613e1f350b8c.jpg",
+    "static/media/Edit.png": "/static/media/Edit.42d4abc01c04eb440f12.png",
+    "static/media/Instagram.png": "/static/media/Instagram.e5fa71d9703562070719.png",
     "index.html": "/index.html",
-    "main.153ef77b.css.map": "/static/css/main.153ef77b.css.map",
-    "main.de1ac163.js.map": "/static/js/main.de1ac163.js.map"
+    "main.ff4ad9b7.css.map": "/static/css/main.ff4ad9b7.css.map",
+    "main.8c14ce51.js.map": "/static/js/main.8c14ce51.js.map"
   },
   "entrypoints": [
-    "static/css/main.153ef77b.css",
-    "static/js/main.de1ac163.js"
+    "static/css/main.ff4ad9b7.css",
+    "static/js/main.8c14ce51.js"
   ]
 }

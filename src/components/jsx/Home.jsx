@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react";
 import { Grid } from '@material-ui/core';
 import {db} from "../../firebase-config"
 import Modal from "react-modal";
-import { ref, set, onValue } from "firebase/database";
+import { ref, set, onValue, get } from "firebase/database";
+import { useNavigate } from "react-router-dom";
 
  
 import ArtCard from "./ArtCard.jsx";
@@ -14,7 +15,8 @@ function Home () {
 
     const [isAddingArt, setAddingArt] = useState(false)
     const [addNewName, setAddNewName] = useState("");
-    const [addNewImage, setAddNewImage] = useState(null);
+    const [addNewImage, setAddNewImage] = useState([]);
+    const [addNewImageTag, setAddNewImageTag] = useState("00");
     const [addNewDescription, setAddNewDescription] = useState("");
 
     const [isViewingArt, setViewingArt] = useState(false);
@@ -28,11 +30,17 @@ function Home () {
 
     const [uploading, setUploading] = useState(false);
 
+    const [artNum, setArtNum] = useState(0);
+
     localStorage.setItem("isLoading", false);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
 
-        if(addNewName === "" || addNewImage === null || addNewDescription === "")
+        console.log(addNewImage);
+
+        if(addNewName === "" || addNewImage.length <= 0 || addNewDescription === "")
         {
             setAddingArtValid(true);
         }
@@ -44,14 +52,24 @@ function Home () {
         onValue(ref(db, "ArtCards"), snapshot =>
         {
             var tempArt = [];
+            var tempI = 0;
             snapshot.forEach(n =>
             {
                 tempArt.push(n.val());
+                tempI++;
             })
             setArtCards(tempArt);
+            setArtNum(tempI);
         })
 
-        setUser(JSON.parse(localStorage.getItem("LoggedInUser")));
+        //Retrieve active user using local storage
+        if(localStorage.getItem("LoggedInUser") !== null)
+        {
+            get(ref(db, "Users/" + JSON.parse(localStorage.getItem("LoggedInUser")))).then(snapshot =>
+            {
+                setUser(snapshot.val());
+            })
+        }
         //getArt();
     }, [addNewName, addNewImage, isAddingArt, addNewDescription, temp])
 
@@ -60,12 +78,14 @@ function Home () {
     {
         try 
         {
-            const baseImage = await convertBase64(addNewImage)
+            let temp = [...addNewImage];
+            temp = await Promise.all(temp.map(convertBase64));
             //await addDoc(artCollection, {name: addNewName, image: baseImage, description: addNewDescription})
             console.log("Start");
             setUploading(true);
             //await setDoc(doc(db, "ArtCards", addNewName), {name: addNewName, image: baseImage, description: addNewDescription});
-            set(ref(db, "ArtCards/" + addNewName), {name: addNewName, image: baseImage, description: addNewDescription});
+            set(ref(db, "ArtCards/" + addNewName), {name: addNewName, image: temp, description: addNewDescription, tag: addNewImageTag});
+            console.log(temp);
             
         }
         catch(err)
@@ -80,7 +100,7 @@ function Home () {
             setAddingArt(false);
             console.log("Done");
             setAddNewName("");
-            setAddNewImage(null);
+            setAddNewImage([]);
             setAddNewDescription("");
         }
     }
@@ -94,15 +114,21 @@ function Home () {
     {
         setAddingArt(false);
         setAddNewName("");
-        setAddNewImage(null);
+        setAddNewImage([]);
         setAddNewDescription("");
     }
 
     function openViewingArt(obj) 
     {
+        /*
         console.log(obj);
         setViewingImage(obj);
         setViewingArt(true);
+        */
+
+        console.log("Start");
+        navigate(`view/${obj.name}`);
+        console.log("Done");
     }
 
     function closeViewingArt() 
@@ -111,7 +137,35 @@ function Home () {
         setViewingImage(null);
     }
 
-    function convertBase64(file)
+    function enableTag(i)
+    {
+        if(i === 0)
+        {
+            let tempString = "1" + addNewImageTag.substring(1, 2);
+            setAddNewImageTag(tempString);
+        }
+        else
+        {
+            let tempString = addNewImageTag.substring(0, 1) + "1"
+            setAddNewImageTag(tempString);
+        }
+    }
+
+    function disableTag(i)
+    {
+        if(i === 0)
+        {
+            let tempString = "0" + addNewImageTag.substring(1, 2);
+            setAddNewImageTag(tempString);
+        }
+        else
+        {
+            let tempString = addNewImageTag.substring(0, 1) + "0"
+            setAddNewImageTag(tempString);
+        }
+    }
+
+    const convertBase64 = (file) =>
     {
         try
         {
@@ -136,22 +190,43 @@ function Home () {
     };
 
     return (
-        <div style ={{backgroundColor: "#f8cde1"}}>
+        <div>
             {localStorage.getItem("isLoading") === true ? 
                     null 
                 : 
-                    <div>
-                        <div className = "addArtCard">
-                            {
-                                user === null ?
-                                    null
-                                :
-                                    <button className = "addButton" onClick = {openAddingArt}>
-                                        <img src = {require("../Images/Add.png")} alt= "Button to add a new piece of art" style = {{height: "50px", width: "50px"}}/>
+                    <div>                 
+                        <div className = "HomeDisplay">
+                            { user === null || user.admin === false ?
+                                <div className = "homeContentTitle">
+                                    <div>Artwork ({artNum})</div>
+                                </div>
+                            :
+                                <div className = "homeContentTitle">
+                                    <div>Artwork ({artNum})</div>
+                                    <button className = "homeContentAddButton" style = {{backgroundColor: "transparent", borderWidth: "0px"}} onClick = {openAddingArt}>
+                                        <img className = "homeContentAdd" src = {require("../Images/Add.png")} alt = "Add new art"/>
                                     </button>
+                                </div>
                             }
+                            
+                            <Grid container spacing = {6} alignItems="center">
+                                {artCards.map((currCard, index) => {
+                                    return (
+                                        <Grid item xs = {12} sm = {6} md = {4} lg = {3} xl = {2} key = {index}>
+                                            <ArtCard 
+                                                name = {currCard.name} 
+                                                image = {currCard.image}
+                                                id = {currCard.id}
+                                                viewFunction = {openViewingArt}
+                                                card = {currCard}
+                                                resetFunction = {setTemp}
+                                            />
+                                        </Grid>
+                                    )
+                                })}
+                            </Grid>
                         </div>
-                        
+
                         {/*Modal for adding art*/}
                         <Modal className = "modalAdd" isOpen = {isAddingArt} onRequestClose = {closeAddingArt} ariaHideApp={false}>
                             {uploading === true ?
@@ -163,16 +238,40 @@ function Home () {
                                 <div className = "addNewImage">
                                     <input className = "addNewImageName" placeholder = "*name..." onChange = {(event) => {(setAddNewName(event.target.value))}}/>
                                     <textarea className = "addNewImageDesc" id = "noResize" placeholder = "description..." onChange = {(event) => {(setAddNewDescription(event.target.value))}}/>
-                                    <input type="file" multiple = {false} accept = ".png, .jpg" onChange = {(event) => {(setAddNewImage(event.target.files[0]))}}/>
+                                    <input type="file" multiple = {true} accept = ".png, .jpg" onChange = {(event) => {(setAddNewImage(event.target.files))}}/>
                                     {
-                                    addNewImage == null ? 
+                                    addNewImage.length <= 0 ? 
                                         null
                                     :
-                                        <div>
-                                            <div><img className = "addNewImageDisplay" src = {URL.createObjectURL(addNewImage)} alt="Preview of art being added"/></div>
-                                            <div><button onClick = {submitNewArt} disabled = {addingArtValid}>Submit</button></div>
-                                        </div>
+                                        addNewImage.length <= 1?
+                                            <div className = "addNewImagePreview">
+                                                <div><img className = "addNewImageDisplay" src = {URL.createObjectURL(addNewImage[0])} alt="Preview of art being added"/></div>
+                                            </div>
+                                        :
+                                            <div className = "addNewImagePreview">
+                                                <div className = "addNewImageDisplayMultiple">
+                                                    <div className = "addNewImageDisplayMultipleOverlay">
+                                                        <div className = "addNewImageDisplayMultipleOverlayText">+ {addNewImage.length - 1}</div>
+                                                    </div>
+                                                    <img className = "addNewImageDisplay" src = {URL.createObjectURL(addNewImage[0])} alt="Preview of art being added"/>
+                                                </div>
+                                            </div>
                                     }
+                                    <div className = "addNewImageTagParent">
+                                        {addNewImageTag.substring(0, 1) === "0"?
+                                            <button className = "addNewImageTagNeg"  onClick = {() => enableTag(0)}>Traditional</button>
+                                        :
+                                            <button className = "addNewImageTagPos"  onClick = {() => disableTag(0)}>Traditional</button>
+                                        }
+                                        
+                                        {addNewImageTag.substring(1, 2) === "0"?
+                                            <button className = "addNewImageTagNeg"  onClick = {() => enableTag(1)}>Digital</button>
+                                        :
+                                            <button className = "addNewImageTagPos"  onClick = {() => disableTag(1)}>Digital</button>
+                                        }
+                                    </div>
+
+                                    <div><button className = "addNewImageSubmit" onClick = {submitNewArt} disabled = {addingArtValid}>Submit</button></div>
                                     <div><button onClick = {closeAddingArt}>Cancel</button></div>
                                 </div>
                                 }
@@ -194,27 +293,6 @@ function Home () {
                                 </div>
                             </Modal>
                         }
-
-
-
-                        <div className = "HomeDisplay">
-                            <Grid container spacing = {3}>
-                                {artCards.map((currCard, index) => {
-                                    return (
-                                        <Grid item xs = {12} sm = {6} md = {4} lg = {3}>
-                                            <ArtCard 
-                                                name = {currCard.name} 
-                                                image = {currCard.image}
-                                                id = {currCard.id}
-                                                viewFunction = {openViewingArt}
-                                                card = {currCard}
-                                                resetFunction = {setTemp}
-                                            />
-                                        </Grid>
-                                    )
-                                })}
-                            </Grid>
-                        </div>
                     </div>
             }   
         </div>

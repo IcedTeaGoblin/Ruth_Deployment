@@ -5,7 +5,6 @@
 
 *, html {
     margin: 0px;
-    top: 0;
 }
 
 .mainNavBar {
@@ -15,64 +14,63 @@
     top: 0;
     display: flex;
     align-items: center;
+
     justify-content: space-between;
+
     flex-direction: row;
-    width: 100% - 10px;
-    height: 100px;
-    overflow:hidden;
+    width: 100vw - 10px;
+    height: 4vh;
 
     padding:  10px;
 
     background-color: rgb(238,144,177);
 
-    border-bottom: solid;
-    border-top: solid;
-    border-color: rgb(234,82,154);
-    border-top-width: 5px;
-    border-bottom-width: 5px;
+    overflow:auto;
 }
 
-.LogoTitle {
-    height: 80%;
-    width: fit-content;
-    display:flex;
-    /*flex-direction: row;*/
-    align-items: center;
-
-    padding: 10px;
-    background-color:rgb(234,82,154);
-    border-radius: 10px;
-}
-
-.Title {
-    /*display: flex;*/
-    /*float: left;*/
-    align-self: center;
-    text-align: center;
-    margin-top: auto;
-    margin-bottom: auto;
-    
-    color: white;
-    font-family: displayCard;
-    font-size: 40px;
-
-    padding: 10px;
-    background-color:rgb(234,82,154);
-    border-radius: 10px;
-
-    margin-left: 10px;
-}
-
-.Logo {
-    /*display:flex;*/
-    height: 90%;
+.navbarName {
+    color:white;
+    font-size:2.5lvb;
     float: left;
+    font-family: "displayCard";
+
+    -webkit-font-smoothing: antialiased !important;
+
+    margin-left: 2vw;
 
     background-color:rgb(234,82,154);
     border-radius: 10px;
 
-    pointer-events: none;
+    padding: 5px;
 }
+
+.navbarNavigation {
+    width: 40%;
+    min-width: 400px;
+
+    display: flex;
+    justify-content:space-around;
+    margin-right: 2vw;
+
+    justify-self: right;
+
+    align-items: center;
+}
+
+.navbarLink {
+    color:white;
+    font-size:2.5lvb;
+    float: right;
+    font-family: "displayCard";
+    line-height: 100%;
+
+    opacity: 100%;
+
+    -webkit-font-smoothing: antialiased !important;
+
+    word-break: break-all;
+}
+
 
 .loginHeader {
     display: flex;
@@ -85,6 +83,7 @@
     font-family: "displayCard";
     color: white;
 
+    height: fit-content;
     margin-bottom: 10px;
 }
 
@@ -120,14 +119,37 @@
     color: white;
     text-decoration: underline;
     cursor: pointer;
-    font-size: 20px;
+    font-size:2.5lvb;
     float: right;
 
     background-color:rgb(234,82,154);
     border-radius: 10px;
-    padding: 5px;
+    padding: 10px;
 }
 
 .logoutButtonB:hover {
     color:blue;
+}
+
+.navbarLink:hover{
+    opacity: 75%
+}
+
+.navbarSignUpLink {
+    display: flex;
+
+    margin-top: 10px;
+}
+
+.navbarSignUpInput {
+    margin-top: 5%;
+}
+
+
+.navbarSignUpEmailWarning {
+    color: red;
+}
+
+.navbarSignUpSubmit {
+    margin-top: 5%;
 }
